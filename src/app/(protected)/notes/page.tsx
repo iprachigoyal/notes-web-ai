@@ -5,15 +5,25 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getNotes, deleteNote, Note } from '@/services/noteService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, SearchIcon, BookOpenIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, SearchIcon, BookOpenIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+
+// Add Dialog components for the popup
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
+} from '@/components/ui/dialog';
 
 export default function NotesPage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [selectedSummary, setSelectedSummary] = useState<{ title: string; summary: string } | null>(null);
 
   // Fetch notes
   const { data: notes = [], isLoading, isError } = useQuery({
@@ -38,6 +48,11 @@ export default function NotesPage() {
     if (window.confirm('Are you sure you want to delete this note?')) {
       deleteMutation.mutate(id);
     }
+  };
+
+  // Handle summary click
+  const handleSummaryClick = (title: string, summary: string) => {
+    setSelectedSummary({ title, summary });
   };
 
   // Filter notes based on search term
@@ -143,10 +158,31 @@ export default function NotesPage() {
               note={note} 
               onDelete={handleDelete} 
               view={view}
+              onSummaryClick={handleSummaryClick}
             />
           ))}
         </div>
       )}
+
+      {/* Summary Dialog */}
+      <Dialog open={!!selectedSummary} onOpenChange={(open) => !open && setSelectedSummary(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-blue-800">
+              <SparklesIcon className="h-5 w-5 mr-2 text-blue-600" />
+              AI Summary: {selectedSummary?.title}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <p className="text-gray-700">{selectedSummary?.summary}</p>
+          </div>
+          <DialogClose asChild>
+            <Button className="mt-4 w-full bg-blue-600 hover:bg-blue-700">
+              Close
+            </Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -155,9 +191,10 @@ interface NoteCardProps {
   note: Note;
   onDelete: (id: string) => void;
   view: 'grid' | 'list';
+  onSummaryClick: (title: string, summary: string) => void;
 }
 
-function NoteCard({ note, onDelete, view }: NoteCardProps) {
+function NoteCard({ note, onDelete, view, onSummaryClick }: NoteCardProps) {
   // Generate a random pastel blue color for the card background
   const getRandomBlueShade = () => {
     const shades = [
@@ -184,7 +221,11 @@ function NoteCard({ note, onDelete, view }: NoteCardProps) {
           </p>
           <p className="text-gray-600 line-clamp-2">{note.content}</p>
           {note.summary && (
-            <div className="mt-3 p-2 bg-white bg-opacity-70 rounded-md border border-blue-100 max-w-md">
+            <div 
+              className="mt-3 p-2 bg-white bg-opacity-70 rounded-md border border-blue-100 max-w-l
+               cursor-pointer hover:bg-blue-50 transition-colors"
+              onClick={() => onSummaryClick(note.title, note.summary || '')}
+            >
               <div className="flex items-center text-sm text-blue-600 mb-1">
                 <SparklesIcon className="h-4 w-4 mr-1" />
                 <span>AI Summary</span>
@@ -225,7 +266,10 @@ function NoteCard({ note, onDelete, view }: NoteCardProps) {
       <CardContent className="flex-grow pt-2">
         <p className="text-gray-600 line-clamp-3">{note.content}</p>
         {note.summary && (
-          <div className="mt-3 p-3 bg-white bg-opacity-70 rounded-md border border-blue-100">
+          <div 
+            className="mt-3 p-3 bg-white bg-opacity-70 rounded-md border border-blue-100 cursor-pointer hover:bg-blue-50 transition-colors"
+            onClick={() => onSummaryClick(note.title, note.summary || '')}
+          >
             <div className="flex items-center text-sm text-blue-600 mb-1">
               <SparklesIcon className="h-4 w-4 mr-1" />
               <span>AI Summary</span>
