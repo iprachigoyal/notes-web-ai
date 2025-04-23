@@ -12,7 +12,8 @@ import { toast } from 'sonner';
 import { ArrowLeftIcon, SparklesIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditNotePage({ params }: { params: { id: string } }) {
+
+export default function EditNotePage({ params }: {params: Promise<{ id: string }>}) {
   const unwrappedParams = React.use(params);
   const id = unwrappedParams.id;
   const [title, setTitle] = useState('');
@@ -103,7 +104,7 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
       setSummary(newSummary);
       toast.success('AI summary has been generated successfully.');
     } catch (error) {
-      toast.error('Failed to generate summary. Please try again.');
+      toast.error(`Failed to generate summary. Please try again. ${error}`);
     } finally {
       setIsSummarizing(false);
     }
@@ -126,7 +127,7 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
   if (isError) {
     return (
       <div className="text-center py-10 dark:bg-gray-950 dark:text-gray-200">
-        <p className="text-red-500 dark:text-red-400">Error loading note. The note may not exist or you don't have permission to view it.</p>
+        <p className="text-red-500 dark:text-red-400">Error loading note. The note may not exist or you do not have permission to view it.</p>
         <Link href="/notes" className="mt-4 inline-block">
           <Button variant="outline" className="text-blue-600 dark:text-blue-300 border-blue-300 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-gray-800">Back to Notes</Button>
         </Link>
