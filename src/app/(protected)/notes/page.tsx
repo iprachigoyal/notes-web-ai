@@ -9,8 +9,6 @@ import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, SearchIcon, BookOpenIcon
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-
-// Add Dialog components for the popup
 import {
   Dialog,
   DialogContent,
@@ -67,7 +65,7 @@ export default function NotesPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl font-bold text-blue-900 flex items-center">
-          <BookOpenIcon className="h-8 w-8 mr-2 text-blue-600" />
+         
           My Notes
         </h1>
         <div className="flex gap-2">

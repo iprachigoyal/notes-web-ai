@@ -66,12 +66,12 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         <Link href="/notes" className="flex items-center px-3 py-2 text-sm rounded-md bg-blue-50 text-blue-600 font-medium">
           All Notes
         </Link>
-        <Link href="/notes/favorites" className="flex items-center px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
+        {/* <Link href="/notes/favorites" className="flex items-center px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           Favorites
         </Link>
         <Link href="/notes/trash" className="flex items-center px-3 py-2 text-sm rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-600">
           Trash
-        </Link>
+        </Link> */}
       </nav>
       <div className="pt-4 border-t border-blue-100">
         <Button variant="outline" className="w-full justify-start text-gray-700 border-blue-100 hover:bg-blue-50 hover:text-blue-600" onClick={toggleTheme}>
