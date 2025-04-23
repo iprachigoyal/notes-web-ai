@@ -1,11 +1,10 @@
 'use client';
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getNotes, deleteNote, Note } from '@/services/noteService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, SearchIcon, BookOpenIcon, XIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, PencilIcon, SparklesIcon, SearchIcon } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
@@ -16,12 +15,15 @@ import {
   DialogTitle,
   DialogClose
 } from '@/components/ui/dialog';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function NotesPage() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [selectedSummary, setSelectedSummary] = useState<{ title: string; summary: string } | null>(null);
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   // Fetch notes
   const { data: notes = [], isLoading, isError } = useQuery({
@@ -64,16 +66,19 @@ export default function NotesPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <h1 className="text-3xl font-bold text-blue-900 flex items-center">
-         
+        <h1 className={`text-3xl font-bold flex items-center ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>
           My Notes
         </h1>
         <div className="flex gap-2">
-          <div className="flex border border-blue-200 rounded-lg overflow-hidden">
+          <div className={`flex border rounded-lg overflow-hidden ${
+            isDark ? 'border-gray-700' : 'border-blue-200'
+          }`}>
             <button
               onClick={() => setView('grid')}
               className={`px-3 py-1.5 ${
-                view === 'grid' ? 'bg-blue-500 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'
+                view === 'grid' 
+                  ? isDark ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white'
+                  : isDark ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-blue-600 hover:bg-blue-50'
               }`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -86,7 +91,9 @@ export default function NotesPage() {
             <button
               onClick={() => setView('list')}
               className={`px-3 py-1.5 ${
-                view === 'list' ? 'bg-blue-500 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'
+                view === 'list' 
+                  ? isDark ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white'
+                  : isDark ? 'bg-gray-800 text-gray-300 hover:bg-gray-700' : 'bg-white text-blue-600 hover:bg-blue-50'
               }`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -101,7 +108,7 @@ export default function NotesPage() {
           </div>
           
           <Link href="/notes/new">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button className={isDark ? "bg-blue-700 hover:bg-blue-600 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"}>
               <PlusIcon className="mr-2 h-4 w-4" />
               New Note
             </Button>
@@ -113,34 +120,44 @@ export default function NotesPage() {
         <input
           type="text"
           placeholder="Search notes..."
-          className="w-full p-3 pl-10 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-300 transition-all duration-200"
+          className={`w-full p-3 pl-10 rounded-lg transition-all duration-200 ${
+            isDark 
+              ? 'bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-700'
+              : 'border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-300'
+          }`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <SearchIcon className="h-5 w-5 absolute left-3 top-3.5 text-blue-400" />
+        <SearchIcon className={`h-5 w-5 absolute left-3 top-3.5 ${isDark ? 'text-gray-400' : 'text-blue-400'}`} />
       </div>
 
       {isLoading ? (
         <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${isDark ? 'border-blue-400' : 'border-blue-600'}`}></div>
         </div>
       ) : isError ? (
-        <div className="text-center py-16 bg-red-50 rounded-lg border border-red-100">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className={`text-center py-16 rounded-lg border ${
+          isDark ? 'bg-red-900/30 border-red-900' : 'bg-red-50 border-red-100'
+        }`}>
+          <svg xmlns="http://www.w3.org/2000/svg" className={`h-12 w-12 mx-auto mb-4 ${isDark ? 'text-red-400' : 'text-red-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
-          <p className="text-red-700 font-medium text-lg">Error loading notes</p>
-          <p className="text-red-600 mt-2">Please try again later or contact support if the issue persists.</p>
+          <p className={`font-medium text-lg ${isDark ? 'text-red-300' : 'text-red-700'}`}>Error loading notes</p>
+          <p className={isDark ? 'text-red-400 mt-2' : 'text-red-600 mt-2'}>Please try again later or contact support if the issue persists.</p>
         </div>
       ) : filteredNotes.length === 0 ? (
-        <div className="text-center py-16 bg-blue-50 bg-opacity-50 rounded-lg border border-blue-100">
-          <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-blue-100 mb-4">
-            <PlusIcon className="h-8 w-8 text-blue-600" />
+        <div className={`text-center py-16 rounded-lg border ${
+          isDark ? 'bg-blue-900/20 border-blue-900' : 'bg-blue-50 bg-opacity-50 border-blue-100'
+        }`}>
+          <div className={`inline-flex justify-center items-center w-16 h-16 rounded-full mb-4 ${
+            isDark ? 'bg-blue-900/50' : 'bg-blue-100'
+          }`}>
+            <PlusIcon className={`h-8 w-8 ${isDark ? 'text-blue-300' : 'text-blue-600'}`} />
           </div>
-          <p className="text-blue-800 font-medium text-lg">No notes found</p>
-          <p className="text-blue-600 mt-1">Create your first note to get started!</p>
+          <p className={`font-medium text-lg ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>No notes found</p>
+          <p className={isDark ? 'text-blue-400 mt-1' : 'text-blue-600 mt-1'}>Create your first note to get started!</p>
           <Link href="/notes/new" className="mt-4 inline-block">
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className={isDark ? 'bg-blue-700 hover:bg-blue-600' : 'bg-blue-600 hover:bg-blue-700'}>
               Create Note
             </Button>
           </Link>
@@ -157,6 +174,7 @@ export default function NotesPage() {
               onDelete={handleDelete} 
               view={view}
               onSummaryClick={handleSummaryClick}
+              isDark={isDark}
             />
           ))}
         </div>
@@ -164,18 +182,22 @@ export default function NotesPage() {
 
       {/* Summary Dialog */}
       <Dialog open={!!selectedSummary} onOpenChange={(open) => !open && setSelectedSummary(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className={`max-w-md ${isDark ? 'bg-gray-900 border-gray-700' : ''}`}>
           <DialogHeader>
-            <DialogTitle className="flex items-center text-blue-800">
-              <SparklesIcon className="h-5 w-5 mr-2 text-blue-600" />
+            <DialogTitle className={`flex items-center ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
+              <SparklesIcon className={`h-5 w-5 mr-2 ${isDark ? 'text-blue-400' : 'text-blue-600'}`} />
               AI Summary: {selectedSummary?.title}
             </DialogTitle>
           </DialogHeader>
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <p className="text-gray-700">{selectedSummary?.summary}</p>
+          <div className={`mt-4 p-4 rounded-lg border ${
+            isDark ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-100'
+          }`}>
+            <p className={isDark ? 'text-gray-300' : 'text-gray-700'}>{selectedSummary?.summary}</p>
           </div>
           <DialogClose asChild>
-            <Button className="mt-4 w-full bg-blue-600 hover:bg-blue-700">
+            <Button className={`mt-4 w-full ${
+              isDark ? 'bg-blue-700 hover:bg-blue-600' : 'bg-blue-600 hover:bg-blue-700'
+            }`}>
               Close
             </Button>
           </DialogClose>
@@ -190,51 +212,84 @@ interface NoteCardProps {
   onDelete: (id: string) => void;
   view: 'grid' | 'list';
   onSummaryClick: (title: string, summary: string) => void;
+  isDark: boolean;
 }
 
-function NoteCard({ note, onDelete, view, onSummaryClick }: NoteCardProps) {
-  // Generate a random pastel blue color for the card background
-  const getRandomBlueShade = () => {
-    const shades = [
-      'bg-gradient-to-br from-blue-50 to-white',
-      'bg-gradient-to-br from-indigo-50 to-white',
-      'bg-gradient-to-br from-sky-50 to-white',
-      'bg-gradient-to-tr from-blue-50 to-white',
-      'bg-gradient-to-r from-blue-50 to-white',
-    ];
-    return shades[note.id.charCodeAt(0) % shades.length];
+function NoteCard({ note, onDelete, view, onSummaryClick, isDark }: NoteCardProps) {
+  // Generate a random background color based on the theme
+  const getRandomBackgroundShade = () => {
+    if (isDark) {
+      const darkShades = [
+        'bg-gradient-to-br from-gray-800 to-gray-900',
+        'bg-gradient-to-br from-gray-800 to-blue-900',
+        'bg-gradient-to-br from-blue-900 to-gray-900',
+        'bg-gradient-to-tr from-gray-800 to-gray-900',
+        'bg-gradient-to-r from-gray-800 to-gray-900',
+      ];
+      return darkShades[note.id.charCodeAt(0) % darkShades.length];
+    } else {
+      const lightShades = [
+        'bg-gradient-to-br from-blue-50 to-white',
+        'bg-gradient-to-br from-indigo-50 to-white',
+        'bg-gradient-to-br from-sky-50 to-white',
+        'bg-gradient-to-tr from-blue-50 to-white',
+        'bg-gradient-to-r from-blue-50 to-white',
+      ];
+      return lightShades[note.id.charCodeAt(0) % lightShades.length];
+    }
   };
 
   const cardClass = view === 'list' 
-    ? "flex flex-row gap-4 p-4 border border-blue-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 " + getRandomBlueShade()
-    : "h-full flex flex-col border border-blue-100 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 " + getRandomBlueShade();
+    ? `flex flex-row gap-4 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ${getRandomBackgroundShade()} ${
+        isDark ? 'border border-gray-700' : 'border border-blue-100'
+      }`
+    : `h-full flex flex-col rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ${getRandomBackgroundShade()} ${
+        isDark ? 'border border-gray-700' : 'border border-blue-100'
+      }`;
 
   if (view === 'list') {
     return (
       <div className={cardClass}>
         <div className="flex-grow">
-          <h3 className="text-xl font-semibold text-blue-900 mb-1">{note.title}</h3>
-          <p className="text-sm text-blue-500 mb-2">
+          <h3 className={`text-xl font-semibold mb-1 ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>
+            {note.title}
+          </h3>
+          <p className={`text-sm mb-2 ${isDark ? 'text-blue-400' : 'text-blue-500'}`}>
             Updated {formatDistanceToNow(new Date(note.updated_at), { addSuffix: true })}
           </p>
-          <p className="text-gray-600 line-clamp-2">{note.content}</p>
+          <p className={isDark ? 'text-gray-300 line-clamp-2' : 'text-gray-600 line-clamp-2'}>
+            {note.content}
+          </p>
           {note.summary && (
             <div 
-              className="mt-3 p-2 bg-white bg-opacity-70 rounded-md border border-blue-100 max-w-l
-               cursor-pointer hover:bg-blue-50 transition-colors"
+              className={`mt-3 p-2 rounded-md max-w-l cursor-pointer transition-colors ${
+                isDark 
+                  ? 'bg-gray-800 bg-opacity-70 border border-gray-700 hover:bg-gray-700' 
+                  : 'bg-white bg-opacity-70 border border-blue-100 hover:bg-blue-50'
+              }`}
               onClick={() => onSummaryClick(note.title, note.summary || '')}
             >
-              <div className="flex items-center text-sm text-blue-600 mb-1">
+              <div className={`flex items-center text-sm mb-1 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
                 <SparklesIcon className="h-4 w-4 mr-1" />
                 <span>AI Summary</span>
               </div>
-              <p className="text-sm text-gray-600 line-clamp-1">{note.summary}</p>
+              <p className={`text-sm line-clamp-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                {note.summary}
+              </p>
             </div>
           )}
         </div>
         <div className="flex flex-col justify-center gap-2 min-w-24">
           <Link href={`/notes/${note.id}`} className="w-full">
-            <Button variant="ghost" size="sm" className="w-full justify-center text-blue-600 hover:bg-blue-100 hover:text-blue-700">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className={`w-full justify-center ${
+                isDark 
+                  ? 'text-blue-400 hover:bg-blue-900/40 hover:text-blue-300' 
+                  : 'text-blue-600 hover:bg-blue-100 hover:text-blue-700'
+              }`}
+            >
               <PencilIcon className="h-4 w-4 mr-1" />
               Edit
             </Button>
@@ -242,7 +297,11 @@ function NoteCard({ note, onDelete, view, onSummaryClick }: NoteCardProps) {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="w-full justify-center text-red-500 hover:bg-red-50 hover:text-red-600" 
+            className={`w-full justify-center ${
+              isDark 
+                ? 'text-red-400 hover:bg-red-900/30 hover:text-red-300' 
+                : 'text-red-500 hover:bg-red-50 hover:text-red-600'
+            }`}
             onClick={() => onDelete(note.id)}
           >
             <TrashIcon className="h-4 w-4 mr-1" />
@@ -255,30 +314,48 @@ function NoteCard({ note, onDelete, view, onSummaryClick }: NoteCardProps) {
 
   return (
     <Card className={cardClass}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold truncate text-blue-900">{note.title}</CardTitle>
-        <p className="text-sm text-blue-500">
+      <CardHeader className={`pb-2 ${isDark ? 'border-gray-700' : ''}`}>
+        <CardTitle className={`text-xl font-semibold truncate ${isDark ? 'text-blue-300' : 'text-blue-900'}`}>
+          {note.title}
+        </CardTitle>
+        <p className={`text-sm ${isDark ? 'text-blue-400' : 'text-blue-500'}`}>
           Updated {formatDistanceToNow(new Date(note.updated_at), { addSuffix: true })}
         </p>
       </CardHeader>
       <CardContent className="flex-grow pt-2">
-        <p className="text-gray-600 line-clamp-3">{note.content}</p>
+        <p className={isDark ? 'text-gray-300 line-clamp-3' : 'text-gray-600 line-clamp-3'}>
+          {note.content}
+        </p>
         {note.summary && (
           <div 
-            className="mt-3 p-3 bg-white bg-opacity-70 rounded-md border border-blue-100 cursor-pointer hover:bg-blue-50 transition-colors"
+            className={`mt-3 p-3 rounded-md cursor-pointer transition-colors ${
+              isDark 
+                ? 'bg-gray-800 bg-opacity-70 border border-gray-700 hover:bg-gray-700' 
+                : 'bg-white bg-opacity-70 border border-blue-100 hover:bg-blue-50'
+            }`}
             onClick={() => onSummaryClick(note.title, note.summary || '')}
           >
-            <div className="flex items-center text-sm text-blue-600 mb-1">
+            <div className={`flex items-center text-sm mb-1 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>
               <SparklesIcon className="h-4 w-4 mr-1" />
               <span>AI Summary</span>
             </div>
-            <p className="text-sm text-gray-600 line-clamp-2">{note.summary}</p>
+            <p className={`text-sm line-clamp-2 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              {note.summary}
+            </p>
           </div>
         )}
       </CardContent>
-      <CardFooter className="border-t border-blue-100 pt-3 flex justify-between">
+      <CardFooter className={`pt-3 flex justify-between border-t ${isDark ? 'border-gray-700' : 'border-blue-100'}`}>
         <Link href={`/notes/${note.id}`}>
-          <Button variant="ghost" size="sm" className="text-blue-600 hover:bg-blue-100 hover:text-blue-700">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={
+              isDark 
+                ? 'text-blue-400 hover:bg-blue-900/40 hover:text-blue-300' 
+                : 'text-blue-600 hover:bg-blue-100 hover:text-blue-700'
+            }
+          >
             <PencilIcon className="h-4 w-4 mr-1" />
             Edit
           </Button>
@@ -286,7 +363,11 @@ function NoteCard({ note, onDelete, view, onSummaryClick }: NoteCardProps) {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="text-red-500 hover:bg-red-50 hover:text-red-600" 
+          className={
+            isDark 
+              ? 'text-red-400 hover:bg-red-900/30 hover:text-red-300' 
+              : 'text-red-500 hover:bg-red-50 hover:text-red-600'
+          }
           onClick={() => onDelete(note.id)}
         >
           <TrashIcon className="h-4 w-4 mr-1" />

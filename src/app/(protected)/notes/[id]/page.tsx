@@ -117,50 +117,50 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex justify-center items-center h-64 dark:bg-gray-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400"></div>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="text-center py-10">
-        <p className="text-red-500">Error loading note. The note may not exist or you don't have permission to view it.</p>
+      <div className="text-center py-10 dark:bg-gray-950 dark:text-gray-200">
+        <p className="text-red-500 dark:text-red-400">Error loading note. The note may not exist or you don't have permission to view it.</p>
         <Link href="/notes" className="mt-4 inline-block">
-          <Button variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-50">Back to Notes</Button>
+          <Button variant="outline" className="text-blue-600 dark:text-blue-300 border-blue-300 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-gray-800">Back to Notes</Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-blue-100 min-h-screen p-6">
+    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 min-h-screen p-6 transition-colors duration-300">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <Link href="/notes" className="flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+          <Link href="/notes" className="flex items-center text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 transition-colors">
             <ArrowLeftIcon className="h-4 w-4 mr-1" />
             Back to Notes
           </Link>
         </div>
         
-        <Card className="border border-blue-200 shadow-lg overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-blue-700 to-blue-500 text-white p-6">
-            <CardTitle className="text-2xl font-bold">Edit Note</CardTitle>
+        <Card className="border border-blue-200 dark:border-gray-800 shadow-lg dark:shadow-xl overflow-hidden dark:bg-gray-900 transition-colors duration-300">
+          <CardHeader className="flex flex-row items-center justify-between text-blue-900 bg-blue-50 dark:bg-gray-950 dark:text-blue-300 p-6">
+            <CardTitle className="text-2xl font-bold ">Edit Note</CardTitle>
             <Button 
               variant="destructive" 
               size="sm" 
               onClick={handleDelete} 
-              className="bg-red-500 hover:bg-red-600 flex items-center shadow"
+              className="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 flex items-center shadow"
             >
               <TrashIcon className="h-4 w-4 mr-1" />
               Delete
             </Button>
           </CardHeader>
           <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-6 p-6">
+            <CardContent className="space-y-6 p-6 dark:bg-gray-900">
               <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium text-blue-800">
+                <label htmlFor="title" className="text-sm font-medium text-blue-800 dark:text-blue-100">
                   Title
                 </label>
                 <Input
@@ -169,45 +169,45 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
-                  className="border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+                  className="border-blue-200 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="content" className="text-sm font-medium text-blue-800">
+                <label htmlFor="content" className="text-sm font-medium text-blue-800 dark:text-blue-100">
                   Content
                 </label>
                 <div className="relative">
                   <Textarea
                     id="content"
                     placeholder="Write your note here..."
-                    className="min-h-64 resize-y border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200"
+                    className="min-h-64 resize-y border-blue-200 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     required
                   />
-                  <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+                  <div className="absolute bottom-2 right-2 text-xs text-gray-500 dark:text-gray-400">
                     {content.length} characters
                   </div>
                 </div>
               </div>
               {summary && (
                 <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium text-blue-800">
-                    <SparklesIcon className="h-4 w-4 mr-1 text-blue-500" />
+                  <div className="flex items-center text-sm font-medium text-blue-800 dark:text-blue-100">
+                    <SparklesIcon className="h-4 w-4 mr-1 text-blue-500 dark:text-blue-400" />
                     <span>AI Summary</span>
                   </div>
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                    <p className="text-gray-700">{summary}</p>
+                  <div className="p-4 bg-blue-50 dark:bg-gray-800 rounded-lg border border-blue-100 dark:border-gray-700">
+                    <p className="text-gray-700 dark:text-gray-200">{summary}</p>
                   </div>
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 p-6 border-t border-blue-100 bg-blue-50">
+            <CardFooter className="flex flex-col sm:flex-row justify-between gap-4 p-6 border-t border-blue-100 dark:border-gray-800 bg-blue-50 dark:bg-gray-900">
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={() => router.push('/notes')}
-                className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                className="border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-gray-800"
               >
                 Cancel
               </Button>
@@ -217,7 +217,7 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
                   variant="outline"
                   onClick={handleGenerateSummary}
                   disabled={isSummarizing || !content.trim()}
-                  className="border-blue-300 bg-blue-100 text-blue-700 hover:bg-blue-200"
+                  className="border-blue-300 dark:border-blue-700 bg-blue-100 dark:bg-gray-800 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-gray-700"
                 >
                   <SparklesIcon className="h-4 w-4 mr-1" />
                   {isSummarizing ? 'Generating...' : 'Generate Summary'}
@@ -225,7 +225,7 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
                 <Button 
                   type="submit"
                   disabled={isSubmitting || !content.trim() || !title.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow"
+                  className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white shadow"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Changes'}
                 </Button>
@@ -234,7 +234,7 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
           </form>
         </Card>
         
-        <div className="mt-8 bg-blue-800 text-white p-6 rounded-xl shadow-lg">
+        <div className="mt-8 bg-blue-800 dark:bg-blue-950 text-white p-6 rounded-xl shadow-lg transition-colors duration-300">
           <h3 className="text-lg font-bold mb-3">Note Tips</h3>
           <ul className="space-y-2 text-blue-100">
             <li className="flex items-start">
@@ -245,7 +245,6 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
               <span className="mr-2">•</span>
               <span>Remember to save your changes before navigating away.</span>
             </li>
-            
           </ul>
         </div>
       </div>
