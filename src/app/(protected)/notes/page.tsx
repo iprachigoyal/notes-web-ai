@@ -26,17 +26,10 @@ export default function NotesPage() {
     mutationFn: deleteNote,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
-      toast({
-        title: 'Note deleted',
-        description: 'Your note has been deleted successfully.',
-      });
+      toast.success('Your note has been deleted successfully.');
     },
     onError: (error) => {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: `Failed to delete note: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      });
+      toast.error(`Failed to delete note: ${error instanceof Error ? error.message : 'Unknown error'}`);
     },
   });
 

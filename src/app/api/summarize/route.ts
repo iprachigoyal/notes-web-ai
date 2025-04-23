@@ -3,48 +3,52 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const { text } = await request.json();
-    
+
     if (!text) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }
 
-    const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-    
-    if (!DEEPSEEK_API_KEY) {
-      return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    const GROQ_API_KEY = process.env.GROQ_API_KEY;
+    if (!GROQ_API_KEY) {
+      return NextResponse.json({ error: 'Groq API key not configured' }, { status: 500 });
     }
 
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'llama3-70b-8192', // Change the model here
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant that summarizes text concisely.'
+            content: 'You are an assistant that summarizes text concisely.',
           },
           {
             role: 'user',
-            content: `Please summarize the following text in a concise manner:\n\n${text}`
-          }
+            content: `Summarize this:\n\n${text}`,
+          },
         ],
-        max_tokens: 500
+        temperature: 0.7,
+        max_tokens: 300,
       }),
     });
+    
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      return NextResponse.json({ error: errorData }, { status: response.status });
+    if (!groqResponse.ok) {
+      const error = await groqResponse.text();
+      console.error('Groq error:', error);
+      return NextResponse.json({ error }, { status: groqResponse.status });
     }
 
-    const data = await response.json();
-    return NextResponse.json({ summary: data.choices[0].message.content });
-  } catch (error) {
-    console.error('Error summarizing text:', error);
+    const data = await groqResponse.json();
+    const summary = data?.choices?.[0]?.message?.content;
+
+    return NextResponse.json({ summary });
+  } catch (err) {
+    console.error('Error summarizing:', err);
     return NextResponse.json({ error: 'Failed to summarize text' }, { status: 500 });
   }
 }
