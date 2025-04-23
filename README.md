@@ -16,7 +16,7 @@ A modern notes application with AI summarization capabilities built with Next.js
 - **Styling**: TailwindCSS and Shadcn UI
 - **Backend**: Supabase for authentication and database
 - **State Management**: React Query for data fetching and caching
-- **AI Integration**: DeepSeek API for text summarization
+- **AI Integration**: Groq API for text summarization
 - **Deployment**: Vercel
 
 ## Getting Started
