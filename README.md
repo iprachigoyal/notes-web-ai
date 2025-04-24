@@ -1,8 +1,8 @@
 # AI-Powered Notes App
-
-A modern notes application with AI summarization capabilities built with Next.js, TypeScript, TailwindCSS, and Supabase.
 Loom video link - > https://www.loom.com/share/2ad18da124ed4210ad128dcec9f3d52a?sid=845ff608-36e4-451d-a3b3-2c846d19f554
 ## Features
+A modern notes application with AI summarization capabilities built with Next.js, TypeScript, TailwindCSS, and Supabase.
+
 
 - **User Authentication**: Sign up and login with email/password or Google OAuth
 - **Note Management**: Create, read, update, and delete notes
